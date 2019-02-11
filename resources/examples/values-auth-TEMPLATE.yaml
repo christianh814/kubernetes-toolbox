@@ -1,0 +1,33 @@
+global:
+  deployEnv: prod
+
+dexK8sAuthenticator:
+  clusters:
+  - name: ${DEX_KOPS_CLUSTER}
+    short_description: "k8s cluster"
+    description: "Kubernetes cluster"
+    issuer: https://${DEX_URL}/
+    k8s_master_uri: https://${DEX_KOPS_CLUSTER_API}
+    client_id: dex-k8s-authenticator
+    client_secret: generatedLongRandomPhrase
+    redirect_uri: https://${DEX_LOGIN_URL}/callback/
+    k8s_ca_pem: |
+      -----BEGIN CERTIFICATE-----
+      AAAAAAAAAAABBBBBBBBBBCCCCCC
+      -----END CERTIFICATE-----
+      -----BEGIN RSA PRIVATE KEY-----
+      DDDDDDDDDDDEEEEEEEEEEFFFFFF
+      -----END RSA PRIVATE KEY-----
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+  path: /
+  hosts:
+    - ${DEX_LOGIN_URL}
+  tls:
+    - secretName: cert-auth-login
+      hosts:
+        - ${DEX_LOGIN_URL}

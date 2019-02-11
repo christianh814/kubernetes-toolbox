@@ -136,7 +136,59 @@ You are going to need the `dex-k8s-authenticator` repo; so clone that somewhere
 git clone git@github.com:mintel/dex-k8s-authenticator.git
 ```
 
-We will be using a helm chart to install both dex and the dex-authenticator. In order to do this you'll need to pass a "values yaml file". Create one for dex
+We will be using a helm chart to install both dex and the dex-authenticator. In order to do this you'll need to pass a "values yaml file". Create one for dex by first downloading the template.
 
 ```
+wget https://raw.githubusercontent.com/christianh814/kubernetes-toolbox/master/resources/examples/values-dex-TEMPLATE.yaml
+```
+
+Export the values you're going to replace (note that Github values are case sensitive where applicable)
+
+```
+export DEX_URL=dex.apps.k8s.example.com
+export DEX_LOGIN_URL=login.apps.k8s.example.com
+export LE_ISSUER=letsencrypt-prod
+export DEX_GTHUB_CLIENT_ID=123456789
+export DEX_GITHUB_CLIENT_SECRET=ABCDEFG
+export DEX_GITHUB_ORG=mygithuborg
+export DEX_GITHUB_TEAM=fancyteam
+```
+
+Now create your values file from the template
+
+```
+envsubst < values-dex-TEMPLATE.yaml > values-dex.yaml
+```
+
+You have to open up this new file and add your k8s cert...here's an example
+
+```
+# grep -n -A 8 -w "^tls:" values-dex.yaml
+3:tls:
+4-  certificate: |-
+5-    -----BEGIN CERTIFICATE-----
+6-    AAAAAAAAAAABBBBBBBBBBCCCCCC
+7-    -----END CERTIFICATE-----
+8-  key: |-
+9-    -----BEGIN RSA PRIVATE KEY-----
+10-    DDDDDDDDDDDEEEEEEEEEEFFFFFF
+11-    -----END RSA PRIVATE KEY-----
+
+```
+
+Between lines 5 and 7; replace this with the contents of `/srv/kubernetes/ca.crt`. And on lines 9 through 11; replace it with the contents of `/srv/kubernetes/ca.key`
+
+
+Now export the env vars for the authentication app
+
+```
+export DEX_URL=dex.apps.k8s.example.com
+export DEX_LOGIN_URL=login.apps.k8s.example.com
+export LE_ISSUER=letsencrypt-prod
+export DEX_GTHUB_CLIENT_ID=123456789
+export DEX_GITHUB_CLIENT_SECRET=ABCDEFG
+export DEX_GITHUB_ORG=mygithuborg
+export DEX_GITHUB_TEAM=fancyteam
+export DEX_KOPS_CLUSTER=k8s.example.com
+export DEX_KOPS_CLUSTER_API=api.k8s.example.com
 ```
