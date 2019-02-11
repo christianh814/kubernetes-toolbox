@@ -8,5 +8,5 @@ roleRef:
   kind: ClusterRole
   name: cluster-read-all
 subjects:
-  - kind: Group
+- kind: Group
   name: "${DEX_GITHUB_ORG}:${DEX_GITHUB_TEAM}"
