@@ -225,4 +225,8 @@ HTTP/2 200
 
 To test this, set up a cluster role that can "read only"
 
+```
+kubectl create -f https://raw.githubusercontent.com/christianh814/kubernetes-toolbox/master/resources/examples/readonly-clusterrole.yaml
+```
 
+Next, create a role binding that binds your group (which is your github team) to this role
