@@ -19,7 +19,7 @@ export EXIP=$(dig ${INFRAHOST} +short)
 Get the template and replace the two values
 
 ```
-wget https://raw.githubusercontent.com/christianh814/notes/master/documents/k8s-resources/nginx-ingress-TEMPLATE.yaml
+wget https://raw.githubusercontent.com/christianh814/kubernetes-toolbox/master/resources/examples/nginx-ingress-TEMPLATE.yaml
 envsubst < nginx-ingress-TEMPLATE.yaml > nginx-ingress.yaml
 ```
 
