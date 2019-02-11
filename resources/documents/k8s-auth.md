@@ -20,6 +20,7 @@ Labs:
 * [Configure Dex](#configure-dex)
 * [Install Dex](#install-dex)
 * [RBAC Configuration](#rbac-configuration)
+* [Login](#login)
 
 ## Prerequisites
 
@@ -241,3 +242,28 @@ Create your own version with your values
 envsubst < dex-rolebinding-TEMPLATE.yaml > dex-rolebinding.yaml
 ```
 
+Now bind the role to the group
+
+```
+kubectl create -f dex-rolebinding.yaml
+```
+
+## Login
+
+Go to the login page (output of `kubectl get ing -n kube-system | grep login`) and sign in with your GitHub account:
+
+![login_page](https://cdn-images-1.medium.com/max/800/1*EZQM2p3ubSv4YogXiJ9ujQ.png)
+
+
+Make sure you authorize the login app to connect to github
+
+![login-auth](https://cdn-images-1.medium.com/max/800/1*DaxoB2Y1U4Qzj_qSK5V7Ow.png)
+
+After you login; it'll display instuctions on how to setup your `kubectl` commandline
+
+![login-success](https://cdn-images-1.medium.com/max/800/1*QKHZl_v-s2T_HJ5VYdXdrg.png)
+
+
+## Conclusion
+
+Success! Shout out to [this blog](https://medium.com/preply-engineering/k8s-auth-a81f59d4dff6) that got me most of the way there. There is more info [here](https://github.com/dexidp/dex/blob/master/examples/config-dev.yaml) and [here](https://github.com/dexidp/dex/blob/master/Documentation/kubernetes.md#configuring-the-openid-connect-plugin) if you need it
