@@ -240,3 +240,4 @@ Create your own version with your values
 ```
 envsubst < dex-rolebinding-TEMPLATE.yaml > dex-rolebinding.yaml
 ```
+
