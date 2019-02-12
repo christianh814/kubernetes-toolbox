@@ -215,10 +215,10 @@ helm install -n dex-auth --namespace kube-system --values values-auth.yaml dex-k
 Verify once it's deployed
 
 ```
-curl -sI https://dex.k8s.example.com/callback | head -1
+curl -sI https://${DEX_URL}/callback | head -1
 HTTP/2 400
 
-curl -sI https://login.k8s.example.com/ | head -1
+curl -sI https://${DEX_LOGIN_URL}/ | head -1
 HTTP/2 200
 ```
 
