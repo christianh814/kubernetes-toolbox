@@ -89,7 +89,7 @@ You will need to provide the OCID information to Kubernetes (specifically the AP
 With `kops` this was easy. I first edited my config
 
 ```
-kops edit cluster k8s.chx.osecloud.com
+kops edit cluster k8s.example.com
 ```
 
 And I added the follwowing
