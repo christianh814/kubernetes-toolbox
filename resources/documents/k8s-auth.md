@@ -208,8 +208,8 @@ Installing dex (and the auth app) is easily done with `helm`.
 
 
 ```
-helm install -n dex --namespace kube-system --values values-dex.ymal dex-k8s-authenticator/charts/dex
-helm install -n dex-auth --namespace kube-system --values values-auth.ymal dex-k8s-authenticator/charts/dex-k8s-authenticator
+helm install -n dex --namespace kube-system --values values-dex.yaml dex-k8s-authenticator/charts/dex
+helm install -n dex-auth --namespace kube-system --values values-auth.yaml dex-k8s-authenticator/charts/dex-k8s-authenticator
 ```
 
 Verify once it's deployed
