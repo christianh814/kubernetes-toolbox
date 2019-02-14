@@ -1,6 +1,6 @@
 # Kubernetes with Kops
 
-With `kops` you can spin up a cluster in aws, gce, and digital ocean. These are high level notes.
+With `kops` you can spin up a cluster in `aws`, `gce`, and `digital ocean`. These are high level notes on AWS. I have also ran this on GCE and notes specific to that can be [found here](k8s-kops-gce.md)
 
 ## Prereqs
 
