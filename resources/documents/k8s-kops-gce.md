@@ -80,6 +80,13 @@ KOPS_FEATURE_FLAGS=AlphaAllowGCE
 KOPS_STATE_STORE=gs://kops-install/
 ```
 
+You need to create a network in "auto" mode since legacy mode is [not currently supported](https://github.com/kubernetes/kops/issues/4608).
+
+```
+gcloud compute networks create kops-network --subnet-mode auto
+gcloud compute firewall-rules create kops-firewall --network kops-network --allow tcp:22,tcp:443,icmp
+```
+
 If you're using DNS, make sure you delegated your domain to Google Cloud DNS. Verify with `dig`
 
 ```
@@ -92,8 +99,9 @@ ns-cloud-d4.googledomains.com.
 
 ## Install
 
-Install is the same, no matter what cloud you use. The params just change. Here's an example of what I used
+Install is the same, no matter what cloud you use. The params just change (note I used `--vpc kops-network` to specify the VPC I created above). Here's an example of what I used
 
+> **NOTE** I omitted `--api-loadbalancer-type public` right now just for testing
 
 ```
 kops create cluster \
@@ -104,18 +112,21 @@ kops create cluster \
     --node-size n1-standard-1 \
     --master-size n1-standard-1 \
     --networking calico \
+    --vpc kops-network \
     --ssh-public-key ~/.ssh/id_rsa.pub \
     --state gs://kops-install \
     --api-loadbalancer-type public \
     k8s.example.com
 ```
 
-Then, as normal, ran...
+Then, as normal, run...
 
 
 ```
 kops update cluster k8s.example.com --yes
 ```
+
+> If you're re-installing...you can empty your bucket by running `gsutil -m rm -r gs://kops-install/*`
 
 ## Conclusion
 
