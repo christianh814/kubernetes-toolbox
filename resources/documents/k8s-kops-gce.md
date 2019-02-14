@@ -101,7 +101,7 @@ ns-cloud-d4.googledomains.com.
 
 Install is the same, no matter what cloud you use. The params just change (note I used `--vpc kops-network` to specify the VPC I created above). Here's an example of what I used
 
-> **NOTE** I omitted `--api-loadbalancer-type public` right now just for testing. But leaving the full command here for you to test
+> **NOTE** You can use `--image "ubuntu-os-cloud/ubuntu-1604-xenial-v20170202"` to use the Ubuntu image instead of the standard COS
 
 ```
 kops create cluster \
