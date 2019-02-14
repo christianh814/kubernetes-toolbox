@@ -109,8 +109,8 @@ kops create cluster \
     --zones us-west1-a,us-west1-b,us-west1-c \
     --master-zones us-west1-a,us-west1-b,us-west1-c \
     --dns-zone k8s.example.com \
-    --node-size n1-standard-1 \
-    --master-size n1-standard-1 \
+    --node-size n1-standard-2 \
+    --master-size n1-standard-2 \
     --networking calico \
     --vpc kops-network \
     --ssh-public-key ~/.ssh/id_rsa.pub \
