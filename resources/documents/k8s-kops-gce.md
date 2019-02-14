@@ -120,7 +120,7 @@ kops create cluster \
     --master-size n1-standard-2 \
     --networking calico \
     --vpc kops-network \
-    --project ${PROJECT}
+    --project ${PROJECT} \
     --ssh-public-key ~/.ssh/id_rsa.pub \
     --state gs://kops-install \
     --api-loadbalancer-type public \
