@@ -71,13 +71,20 @@ export KOPS_STATE_STORE=gs://kops-install/
 export KOPS_FEATURE_FLAGS=AlphaAllowGCE
 ```
 
+Set the project you want to install in (this next command will populate the var with the default project you set)
+
+```
+export PROJECT=$(gcloud config get-value project)
+```
+
 Verify that you have all the env var needed for KOPS
 
 ```
-$ env | egrep 'KOPS|GOOGLE'
+$ env | egrep 'KOPS|GOOGLE|PROJECT'
 GOOGLE_APPLICATION_CREDENTIALS=/path/to/kops-sa.json
 KOPS_FEATURE_FLAGS=AlphaAllowGCE
 KOPS_STATE_STORE=gs://kops-install/
+PROJECT=myproject
 ```
 
 You need to create a network in "auto" mode since legacy mode is [not currently supported](https://github.com/kubernetes/kops/issues/4608).
@@ -113,6 +120,7 @@ kops create cluster \
     --master-size n1-standard-2 \
     --networking calico \
     --vpc kops-network \
+    --project ${PROJECT}
     --ssh-public-key ~/.ssh/id_rsa.pub \
     --state gs://kops-install \
     --api-loadbalancer-type public \
