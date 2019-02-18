@@ -87,13 +87,6 @@ KOPS_STATE_STORE=gs://kops-install/
 PROJECT=myproject
 ```
 
-You need to create a network in "auto" mode since legacy mode is [not currently supported](https://github.com/kubernetes/kops/issues/4608).
-
-```
-gcloud compute networks create kops-network --subnet-mode auto
-gcloud compute firewall-rules create kops-firewall --network kops-network --allow tcp:22,tcp:443,icmp
-```
-
 If you're using DNS, make sure you delegated your domain to Google Cloud DNS. Verify with `dig`
 
 ```
@@ -106,7 +99,7 @@ ns-cloud-d4.googledomains.com.
 
 ## Install
 
-Install is the same, no matter what cloud you use. The params just change (note I used `--vpc kops-network` to specify the VPC I created above). Here's an example of what I used
+Install is the same, no matter what cloud you use. The params just change. Here's an example of what I used
 
 > **NOTE** You can use `--image "ubuntu-os-cloud/ubuntu-1604-xenial-v20170202"` to use the Ubuntu image instead of the standard COS
 
@@ -119,7 +112,6 @@ kops create cluster \
     --node-size n1-standard-2 \
     --master-size n1-standard-2 \
     --networking calico \
-    --vpc kops-network \
     --project ${PROJECT} \
     --ssh-public-key ~/.ssh/id_rsa.pub \
     --state gs://kops-install \
@@ -127,8 +119,11 @@ kops create cluster \
     k8s.example.com
 ```
 
-Then, as normal, run...
+> Note that you need to leave OUT `--networking calico` or the install won't work. I'm leaving this in the example for when they fix it
 
+**NOTE** You need to `ssh` into your master after your nodes come up and run the "fix" [noted here](https://github.com/kubernetes/kops/issues/2087#issuecomment-285506042)
+
+Then, as normal, run...
 
 ```
 kops update cluster k8s.example.com --yes
