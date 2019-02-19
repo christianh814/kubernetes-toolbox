@@ -111,7 +111,7 @@ kops create cluster \
     --dns-zone k8s.example.com \
     --node-size n1-standard-2 \
     --master-size n1-standard-2 \
-    --networking calico \
+    --networking weave \
     --project ${PROJECT} \
     --ssh-public-key ~/.ssh/id_rsa.pub \
     --state gs://kops-install \
@@ -119,9 +119,7 @@ kops create cluster \
     k8s.example.com
 ```
 
-> Note that you need to leave OUT `--networking calico` or the install won't work. I'm leaving this in the example for when they fix it
-
-**NOTE** You need to `ssh` into your master after your nodes come up and run the "fix" [noted here](https://github.com/kubernetes/kops/issues/2087#issuecomment-285506042)
+> Note you need to use `weave` or the install won't work. The issue is [noted here](https://github.com/kubernetes/kops/issues/2087#issuecomment-285506042)
 
 Then, as normal, run...
 
