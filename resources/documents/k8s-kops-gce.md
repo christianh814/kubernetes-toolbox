@@ -119,7 +119,7 @@ kops create cluster \
     k8s.example.com
 ```
 
-> Note you need to use `weave` or the install won't work. The issue is [noted here](https://github.com/kubernetes/kops/issues/2087#issuecomment-285506042)
+> Note you need to use `weave` or the install won't work. You **WILL** need to modify the firewalls between nodes/masters. The issue is [noted here](https://github.com/kubernetes/kops/issues/2087#issuecomment-285506042)
 
 Then, as normal, run...
 
