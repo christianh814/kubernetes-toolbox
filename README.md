@@ -6,6 +6,7 @@ These are notes in no paticular oder (it is mostly focused on installation)
 * [Installing in the cloud with Kops](resources/documents/k8s-kops.md)
 * [Ingress](#ingress)
 * [Kubernetes Authentication](resources/documents/k8s-auth.md#kubernetes-authentication)
+* [Storage](resources/documents/k8s-store.md#storage)
 * [Miscellaneous](#miscellaneous-notes)
 
 # Kubernetes Installation
