@@ -2,8 +2,8 @@
 
 Notes specific to storage will be here
 
-[Rook](#rook)
-[Glusterfs](#glusterfs)
+* [Rook](#rook)
+* [Glusterfs](#glusterfs)
 
 ## Rook
 
