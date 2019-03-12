@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+ name: ceph-block-pvc0001
+ annotations:
+   volume.beta.kubernetes.io/storage-class: rook-ceph-block
+spec:
+ accessModes:
+  - ReadWriteOnce
+ resources:
+   requests:
+     storage: 1Gi
