@@ -183,15 +183,26 @@ Use this `kubeadm-config.yaml` in install the first controller. On the controlle
 
 
 ```
-kubeadm init --config=kubeadm-config.yaml
+kubeadm init --config=kubeadm-config.yaml --experimental-upload-certs
 ```
+
+> The `--experimental-upload-certs` uploads certificates to etcd (encrypted) so you can bootstrap your other masters
 
 At this point, if you reload your LB's status page, you should see the first controller going green.
 
 When the bootstrapping finishes; you should see a message like the following. SAVE THIS MESSAGE! You'll need this to join the other 2 controllers. 
 
 ```
-kubeadm join <lb ip>:6443 --token <token> --discovery-token-ca-cert-hash sha256:<hash>
+kubeadm join <loadbalancer>:6443 --token <token> \
+  --discovery-token-ca-cert-hash sha256:<hash> \
+  --experimental-control-plane --certificate-key <key>
+```
+
+It will also output a message for the woker nodes
+
+```
+kubeadm join <loadbalancer>:6443 --token <token> \
+    --discovery-token-ca-cert-hash sha256:<hash>
 ```
 
 Next, install a CNI compliant SDN. I used Calico since it was the easiest (always look to [the doc](https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/#pod-network) for the latest yamls). First wget them
@@ -231,42 +242,10 @@ kube-system   kube-scheduler-dhcp-host-98.cloud.chx            1/1     Running  
 ```
 # Bootstrap Remaining Controllers
 
-After the SDN is installed; this is the point you can boostrap the remaining controllers. Now copy the certificate files from the first control plane node to the rest of them
+After the SDN is installed; this is the point you can boostrap the remaining controllers. Use the `kubeadm join ...` command that you saved before. (on hosts called `controller-1` and `controller-2`)
 
 ```
-for host in 192.168.1.99 192.168.1.5 
-do
-    scp /etc/kubernetes/pki/ca.crt root@$host:
-    scp /etc/kubernetes/pki/ca.key root@$host:
-    scp /etc/kubernetes/pki/sa.key root@$host:
-    scp /etc/kubernetes/pki/sa.pub root@$host:
-    scp /etc/kubernetes/pki/front-proxy-ca.crt root@$host:
-    scp /etc/kubernetes/pki/front-proxy-ca.key root@$host:
-    scp /etc/kubernetes/pki/etcd/ca.crt root@$host:etcd-ca.crt
-    scp /etc/kubernetes/pki/etcd/ca.key root@$host:etcd-ca.key
-    scp /etc/kubernetes/admin.conf root@$host:
-done
-```
-
-Now on the 2 remaining hosts run the follwing commands
-
-```
-mkdir -p /etc/kubernetes/pki/etcd
-mv /root/ca.crt /etc/kubernetes/pki/
-mv /root/ca.key /etc/kubernetes/pki/
-mv /root/sa.pub /etc/kubernetes/pki/
-mv /root/sa.key /etc/kubernetes/pki/
-mv /root/front-proxy-ca.crt /etc/kubernetes/pki/
-mv /root/front-proxy-ca.key /etc/kubernetes/pki/
-mv /root/etcd-ca.crt /etc/kubernetes/pki/etcd/ca.crt
-mv /root/etcd-ca.key /etc/kubernetes/pki/etcd/ca.key
-mv /root/admin.conf /etc/kubernetes/admin.conf
-```
-
-Now finally join the remaining 2 controlplanes to the cluster
-
-```
-kubeadm join <lb ip>:6443 --token <token> --discovery-token-ca-cert-hash sha256:<hash> --experimental-control-plane
+ansible controllers -l contoller-X -m shell -a "kubeadm join <lb>:6443 --token <token> --discovery-token-ca-cert-hash sha256:<hash> --experimental-control-plane --certificate-key <key>"
 ```
 
 Once that finishes; you can see them listed with `kubectl`
@@ -365,13 +344,13 @@ Notes in no paticular order
 
 ## Get join token
 
-First create the token
+This is specifically for kubeadm, First create the token
 
 ```
-kubeadm token create
+kubeadm token create --ttl 90m --print-join-command
 ```
 
-Next, get the hash from the ca cert
+If you need to, get the hash from the ca cert (the `--print-join-command` should have done this for you however)
 
 ```
 openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'
@@ -382,6 +361,23 @@ This is all you need in order to join using the `kubeadm join --token <token> <l
 ```
 kubeadm token list
 ```
+
+If you want to create one for a master run this on your first master (the one where you ran `kubeadm` the first time)
+
+```
+kubeadm init phase upload-certs --experimental-upload-certs
+```
+
+This will output the following
+
+```
+[upload-certs] Storing the certificates in ConfigMap "kubeadm-certs" in the "kube-system" Namespace
+[upload-certs] Using certificate key:
+9555b74008f24687eb964bd90a164ecb5760a89481d9c55a77c129b7db438168
+```
+
+Then you can use the combination of the both outputs to join a new master
+
 ## Create a Route
 
 This QnD assumes the following
