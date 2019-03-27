@@ -27,7 +27,7 @@ This is broken off into sections
 
 # Prerequisites And Assumptions
 
-Out of all sections, this is probably the most important one. Here I will list prereqs and assumptions. This list isn't complete and I assume you know your way around Linux and are familiar with containers and Kubernetes already.
+Out of all sections, this is probably the most important one. Here I will list prereqs and assumptions. This list isn't complete and I assume you know your way around Linux and are familiar with containers and Kubernetes already. Thanks to [this blog](https://octetz.com/posts/ha-control-plane-k8s-kubeadm) for updating some of this howto.
 
 Prereqs:
 
