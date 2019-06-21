@@ -183,10 +183,10 @@ Use this `kubeadm-config.yaml` in install the first controller. On the controlle
 
 
 ```
-kubeadm init --config=kubeadm-config.yaml --experimental-upload-certs
+kubeadm init --config=kubeadm-config.yaml --upload-certs
 ```
 
-> The `--experimental-upload-certs` uploads certificates to etcd (encrypted) so you can bootstrap your other masters
+> The `--upload-certs` uploads certificates to etcd (encrypted) so you can bootstrap your other masters
 
 At this point, if you reload your LB's status page, you should see the first controller going green.
 
@@ -195,7 +195,7 @@ When the bootstrapping finishes; you should see a message like the following. SA
 ```
 kubeadm join <loadbalancer>:6443 --token <token> \
   --discovery-token-ca-cert-hash sha256:<hash> \
-  --experimental-control-plane --certificate-key <key>
+  --control-plane --certificate-key <key>
 ```
 
 It will also output a message for the woker nodes
@@ -244,7 +244,7 @@ kube-system   kube-scheduler-dhcp-host-98.cloud.chx            1/1     Running  
 After the SDN is installed; this is the point you can boostrap the remaining controllers. Use the `kubeadm join ...` command that you saved before. (on hosts called `controller-1` and `controller-2`)
 
 ```
-ansible controllers -l contoller-X -m shell -a "kubeadm join <lb>:6443 --token <token> --discovery-token-ca-cert-hash sha256:<hash> --experimental-control-plane --certificate-key <key>"
+ansible controllers -l contoller-X -m shell -a "kubeadm join <lb>:6443 --token <token> --discovery-token-ca-cert-hash sha256:<hash> --control-plane --certificate-key <key>"
 ```
 
 Once that finishes; you can see them listed with `kubectl`
@@ -259,7 +259,7 @@ dhcp-host-99.cloud.chx   Ready    master   4m52s   v1.13.1
 
 # Bootstrap Worker Nodes
 
-This part is the easiest; you just run the `kubeadm join ...` command WITHOUT the `--experimental-control-plane` flag
+This part is the easiest; you just run the `kubeadm join ...` command WITHOUT the `--control-plane` flag
 
 
 On the 3 workers run the following
@@ -364,7 +364,7 @@ kubeadm token list
 If you want to create one for a master run this on your first master (the one where you ran `kubeadm` the first time)
 
 ```
-kubeadm init phase upload-certs --experimental-upload-certs
+kubeadm init phase upload-certs --upload-certs
 ```
 
 This will output the following
