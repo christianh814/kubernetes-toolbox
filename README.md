@@ -221,7 +221,6 @@ Now load these into kubernetes
 
 ```
 export KUBECONFIG=/etc/kubernetes/admin.conf
-kubectl apply -f rbac-kdd.yaml
 kubectl apply -f calico.yaml
 ```
 
