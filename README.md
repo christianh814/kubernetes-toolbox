@@ -166,7 +166,7 @@ I did the following on my first controller (in the below example; the IP of my L
 ```
 LBIP=192.168.1.97
 cat <<EOF > kubeadm-config.yaml
-apiVersion: kubeadm.k8s.io/v1beta1
+apiVersion: kubeadm.k8s.io/v1beta2
 kind: ClusterConfiguration
 kubernetesVersion: stable
 apiServer:
