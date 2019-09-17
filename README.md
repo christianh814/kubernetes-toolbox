@@ -208,7 +208,7 @@ kubeadm join <loadbalancer>:6443 --token <token> \
 Next, install a CNI compliant SDN. I used Calico since it was the easiest (always look to [the doc](https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/#pod-network) for the latest yamls). First wget them
 
 ```
-curl -O  https://docs.projectcalico.org/v3.7/manifests/calico.yaml
+curl -O https://docs.projectcalico.org/v3.8/manifests/calico.yaml
 ```
 
 Edit the `calico.yaml` file to use the `podSubnet` you defined in the `kubeadm-config.yaml` file
