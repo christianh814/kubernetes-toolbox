@@ -33,8 +33,8 @@ If you haven't already, this is where you would ini helm. [Instuctions here](../
 Using this information; I will deploy the `nginx-ingress` helm chart; giving it the name `nginx-ingress`. List of all options can be found on the [github page](https://github.com/helm/charts/tree/master/stable/nginx-ingress#configuration)
 
 ```
-helm install --name nginx-ingress stable/nginx-ingress --namespace ingress \
---set rbac.create=true --set controller.image.pullPolicy="Always" \
+helm install nginx-ingress stable/nginx-ingress --namespace ingress \
+--set rbac.create=true --set controller.image.pullPolicy="Always" --set controller.extraArgs.enable-ssl-passthrough="" \
 --set controller.nodeSelector.nginx="ingresshost" --set controller.stats.enabled=true \
 --set controller.service.externalIPs={192.168.1.8} --set controller.service.type="ClusterIP"
 ```
@@ -81,8 +81,9 @@ If you're installing nginx "internall" the [above installation with helm](#ingre
 After installing with [kops](k8s-kops.md), I did an `init` with [helm](../../README.md#helm). Then I did a simple install like this
 
 ```
-helm install --name nginx-ingress stable/nginx-ingress \
---namespace ingress --set rbac.create=true --set controller.image.pullPolicy="Always"
+helm install nginx-ingress stable/nginx-ingress \
+--namespace ingress --set rbac.create=true \
+--set controller.extraArgs.enable-ssl-passthrough="" --set controller.image.pullPolicy="Always"
 ```
 
 The above automatically creates a Network `ELB` on `80` and `443` passing through to the NGINX ingress controller (that then sends that traffic to the pods). I took the `ELB` DNS name...
@@ -97,7 +98,7 @@ Then I created a Route53 wildcard entry `*.apps.my.cluster.com` that CNAMEs to t
 First thing to do, is use `helm` to install it
 
 ```
-$ helm install --name=cert-manager stable/cert-manager --version v0.5.2
+$ helm install cert-manager stable/cert-manager --version v0.5.2
 ```
 
 > As of right now there are issues with the latest v0.6.0

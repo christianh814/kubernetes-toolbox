@@ -637,8 +637,6 @@ More notes tk
 
 ## Helm
 
-There are two parts to Helm: The Helm client (`helm`) and the Helm server (`Tiller`).
-
 Helm helps you manage Kubernetes applications. Helm Charts helps you define, install, and upgrade complex Kubernetes applications.
 
 This is a "quick start" (for more complex/secure setups visit the [official docs](https://docs.helm.sh/using_helm))
@@ -661,22 +659,13 @@ source <(helm completion bash)
 Verify it's installed
 
 ```
-helm version --client
-```
-
-Install `tiller` with `helm init`. But remember to create a service account
-
-```
-kubectl create serviceaccount --namespace kube-system tiller
-kubectl create clusterrolebinding tiller-cluster-rule \
---clusterrole=cluster-admin \
---serviceaccount=kube-system:tiller
-helm init --service-account tiller
+helm version
 ```
 
 Now install a sample chart. First, get a fresh list of the repo
 
 ```
+helm repo add stable https://kubernetes-charts.storage.googleapis.com/
 helm repo update
 ```
 
@@ -742,7 +731,7 @@ kubectl create ns monitoring
 Install Prometheus
 
 ```
-helm install stable/prometheus --version 6.7.4 --name prometheus --namespace monitoring
+helm install prometheus stable/prometheus --version 6.7.4 --namespace monitoring
 ```
 
 Next, I create a config file for grafana (based on the above prometheus install...my service name will be `prometheus-server`...yours may differ if you're not following allong exactly)
@@ -793,7 +782,7 @@ EOF
 Once I have that, I install grafana
 
 ```
-helm install --name grafana stable/grafana --version 1.11.6 --namespace monitoring -f grafana-values.yaml
+helm install  grafana stable/grafana --version 1.11.6 --namespace monitoring -f grafana-values.yaml
 ```
 
 Create an ingress for grafana (note I'm using [TLS](resources/documents/k8s-ingress-helm.md#tls) here...you don't NEED to but it's recommended)
