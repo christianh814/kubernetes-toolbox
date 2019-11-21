@@ -106,6 +106,12 @@ argocd app get bgd
 
 8.Sync if you see descrepencies
 
+Patch the app
+
+```
+kubectl -n bgd patch deploy/bgd --type='json' -p='[{"op": "replace", "path": "/spec/template/spec/containers/0/env/0/value", "value":"green"}]'
+```
+
 Sync
 
 ```
