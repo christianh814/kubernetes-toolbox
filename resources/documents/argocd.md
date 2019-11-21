@@ -123,3 +123,47 @@ delete unexpected resources
 ```
 argocd app sync --prune bgd
 ```
+
+9.Kustomize
+
+Based on repo https://github.com/christianh814/gitops-examples under bgdk
+
+add your clusters..
+
+```
+oc login --insecure-skip-tls-verify https://api.openshift4.cloud.chx:6443
+oc login --insecure-skip-tls-verify https://api.ocp4.cloud.chx:6443
+argocd cluster add  default/api-openshift4-cloud-chx:6443/ocp-admin
+argocd cluster add  default/api-ocp4-cloud-chx:6443/ocp-admin
+```
+
+Verify with
+
+```
+argocd cluster list
+```
+
+Add your repo if you haven't already
+
+```
+argocd repo add https://github.com/christianh814/gitops-examples
+```
+
+Add the app to your first cluster...specifying the overlay you want.
+
+```
+argocd app create --project default --name bgdk1 --repo https://github.com/christianh814/gitops-examples --path bgdk/overlays/cluster1 --dest-server https://api.openshift4.cloud.chx:6443 --dest-namespace bgd --revision master
+```
+
+Now do the same for cluster 2
+
+```
+argocd app create --project default --name bgdk2 --repo https://github.com/christianh814/gitops-examples --path bgdk/overlays/cluster2 --dest-server https://api.ocp4.cloud.chx:6443 --dest-namespace bgd --revision master
+```
+
+Now sync them
+
+```
+argocd app sync bgdk1
+argocd app sync bgdk2
+```
