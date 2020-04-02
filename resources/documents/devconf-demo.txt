@@ -1,0 +1,78 @@
+## Demo 1
+
+# Login
+PASS='brS4v-Lj66r-ca2qg-3ni3D'
+oc login --insecure-skip-tls-verify --username kubeadmin --password ${PASS} https://api.chx-cluster1.chx.osecloud.com:6443
+
+# Run cluster add to list available clusters
+argocd cluster add
+
+# Add openshift cluster
+ argocd cluster add default/api-chx-cluster1-chx-osecloud-com:6443/kube:admin
+
+#! Note you may run into an issue...login to the openshift cluster and run
+oc delete secret argocd-manager-dockercfg-tqp6s -n kube-system
+#! switch context back to the managemnet server and try to add again
+
+# Add git repo
+argocd repo add https://github.com/christianh814/gitops-examples
+
+# Add via gui or CLI...here's the CLI
+
+argocd app create --project default --name bgd \
+--repo https://github.com/christianh814/gitops-examples --path bgd/ --dest-server https://api.chx-cluster1.chx.osecloud.com:6443 \
+--dest-namespace bgd --revision rhug
+
+
+# Patch app on k8s cluster
+# NOTE: I didn't make a code change. I made a change to the platform that changed the way my application behaves!
+kubectl -n bgd patch deploy/bgd --type='json' \
+-p='[{"op": "replace", "path": "/spec/template/spec/containers/0/env/0/value", "value":"green"}]'
+
+
+# Make argo sync it
+argocd app sync --prune bgd
+
+# Delete app in argo to delete the app from the clsuter
+argocd app delete bgd --cascade
+
+##
+
+## Demo 2
+
+# Login
+PASS='hPHK6-7Lcpp-sCmJj-hTTYt'
+oc login --insecure-skip-tls-verify --username kubeadmin --password ${PASS} https://api.chx-cluster2.chx.osecloud.com:6443
+
+# Run cluster add to list available clusters
+argocd cluster add
+
+# Add openshift cluster
+ argocd cluster add default/api-chx-cluster2-chx-osecloud-com:6443/kube:admin
+
+#! Note you may run into an issue...login to the openshift cluster and run
+oc delete secret argocd-manager-dockercfg-tqp6s -n kube-system
+#! switch context back to the managemnet server and try to add again
+
+# Add app via gui or CLI...here's the CLI
+
+## Cluster1
+argocd app create --project default --name bgdk1 \
+--repo https://github.com/christianh814/gitops-examples --path bgdk/overlays/cluster1 \
+--dest-server https://api.chx-cluster1.chx.osecloud.com:6443 --dest-namespace bgd --revision rhug
+
+## Cluster2
+argocd app create --project default --name bgdk2 \
+--repo https://github.com/christianh814/gitops-examples --path bgdk/overlays/cluster2 \
+--dest-server https://api.chx-cluster2.chx.osecloud.com:6443 --dest-namespace bgd --revision rhug
+
+# Make argo sync it
+argocd app sync --prune bgdk1
+argocd app sync --prune bgdk2
+
+
+# Delete app in argo to delete the app from the clsuter
+argocd app delete bgdk1 --cascade
+argocd app delete bgdk2 --cascade
+
+##
