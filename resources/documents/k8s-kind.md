@@ -20,13 +20,15 @@ To create a cluster, you can simply run
 kind create cluster
 ```
 
-It uses `kubeadmin` so you can provide it customizations if you wish. Here is an example mulimaster setup (opening ports to use in case I want to install ingress)
+Here is an example mulimaster setup (opening ports to use in case I want to install ingress). I disabled the CNI, and changed the podsubnet and servicesubnet (because I'm using calico).
 
 ```yaml
 kind: Cluster
 apiVersion: kind.sigs.k8s.io/v1alpha3
 networking:
   disableDefaultCNI: True
+  podSubnet: "10.254.0.0/16"
+  serviceSubnet: "172.30.0.0/16"
 nodes:
 - role: control-plane
 - role: control-plane
@@ -41,15 +43,6 @@ nodes:
     listenAddress: 0.0.0.0
 - role: worker
 - role: worker
-kubeadmConfigPatches:
-- |
-  apiVersion: kubeadm.k8s.io/v1beta2
-  kind: ClusterConfiguration
-  metadata:
-    name: config
-  networking:
-    serviceSubnet: "172.30.0.0/16"
-    podSubnet: "10.254.0.0/16"
 ```
 
 Then you'd just run...
@@ -61,9 +54,11 @@ kind create cluster --config=config.yaml
 :warning: In my above yaml example I disabled the default CNI, so you need to install one after the cluster starts. Example:
 
 ```shell
-curl -so calico.yaml https://docs.projectcalico.org/v3.11/manifests/calico.yaml
-sed -i 's/192\.168/10\.254/g' calico.yaml
-kubectl apply -f calico.yaml
+curl -so manifests/calico.yaml https://docs.projectcalico.org/v3.11/manifests/calico.yaml
+sed -i 's/192\.168/10\.254/g' manifests/calico.yaml
+kubectl apply -f manifests/calico.yaml
+kubectl rollout status ds calico-node -n kube-system
+kubectl rollout status deploy calico-kube-controllers -n kubesystem
 ```
 
 Worker lables don't get set, do it with this "one-liner"
@@ -86,7 +81,9 @@ helm repo update
 helm install ingress-nginx stable/nginx-ingress --namespace ingress-nginx --set controller.nodeSelector.nginx="ingresshost" \
 --set rbac.create=true --set controller.image.pullPolicy="Always" --set controller.extraArgs.enable-ssl-passthrough="" \
 --set controller.stats.enabled=true --set controller.service.type="ClusterIP" \
---set controller.kind="DaemonSet" --set controller.daemonset.useHostPort=true 
+--set controller.kind="DaemonSet" --set controller.daemonset.useHostPort=true
+kubectl rollout status ds ingress-nginx-nginx-ingress-controller -n ingress-nginx
+kubectl rollout status deploy ingress-nginx-nginx-ingress-default-backend -n ingress-nginx
 ```
 
 :warning: Note, that I labeled the worker based on the one I did the portmappings on in the `config.yaml` file. In my case it was the first node.
