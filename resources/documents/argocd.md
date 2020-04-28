@@ -172,7 +172,7 @@ argocd app sync bgdk2
 
 ## OCP
 
-On OpenShift, once you've installed the operator, just load this CR
+On OpenShift, once you've installed the operator, just load [this CR](../resources/examples/argocd.yaml)
 
 ```
 apiVersion: argoproj.io/v1alpha1
