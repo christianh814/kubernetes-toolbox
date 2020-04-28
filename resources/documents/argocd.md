@@ -2,6 +2,8 @@
 
 > Quicknotes for now from [official site](https://argoproj.github.io/argo-cd/getting_started/)
 
+## K8S
+
 1.Install
 
 ```
@@ -166,4 +168,28 @@ Now sync them
 ```
 argocd app sync bgdk1
 argocd app sync bgdk2
+```
+
+## OCP
+
+On OpenShift, once you've installed the operator, just load this CR
+
+```
+apiVersion: argoproj.io/v1alpha1
+kind: ArgoCD
+metadata:
+  name: argocd
+  namespace: argocd
+spec:
+  server:
+    route: true
+  dex:
+    openShiftOAuth: true
+    image: quay.io/redhat-cop/dex
+    version: v2.22.0-openshift
+  rbac:
+    defaultPolicy: 'role:readonly'
+    policy: |
+      g, system:cluster-admins, role:admin
+    scopes: '[groups]'
 ```
