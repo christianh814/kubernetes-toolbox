@@ -143,7 +143,7 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
     ingress.kubernetes.io/ssl-redirect: "true"
     kubernetes.io/tls-acme: "true"
-    certmanager.k8s.io/cluster-issuer: letsencrypt-prod
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
     kubernetes.io/ingress.class: "nginx"
   name: welcome-php
 spec:
