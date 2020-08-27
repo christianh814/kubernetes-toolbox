@@ -98,6 +98,8 @@ Then I created a Route53 wildcard entry `*.apps.my.cluster.com` that CNAMEs to t
 First thing to do, is use `helm` to install it
 
 ```
+$ helm repo add jetstack https://charts.jetstack.io
+$ helm repo update
 $ helm install cert-manager stable/cert-manager --version v0.5.2
 ```
 
