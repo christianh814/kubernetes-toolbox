@@ -280,6 +280,12 @@ dhcp-host-98.cloud.chx   Ready    master   40m     v1.13.1
 dhcp-host-99.cloud.chx   Ready    master   10m     v1.13.1
 ```
 
+Label them as workers with this handy "one liner"
+
+```
+kubectl  get nodes --no-headers -l '!node-role.kubernetes.io/master' -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}' | xargs -I{} kubectl label node {} node-role.kubernetes.io/worker=''
+```
+
 # Smoke Test
 
 Test your cluster by deploying a pod with a `NodePort` definition.
