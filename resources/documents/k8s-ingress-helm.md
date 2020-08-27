@@ -100,7 +100,7 @@ First thing to do, is use `helm` to install it
 ```
 $ helm repo add jetstack https://charts.jetstack.io
 $ helm repo update
-$ helm install cert-manager stable/cert-manager --version v0.5.2
+$ helm install cert-manager jetstack/cert-manager --namespace ingress
 ```
 
 > As of right now there are issues with the latest v0.6.0
