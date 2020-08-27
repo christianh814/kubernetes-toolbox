@@ -67,7 +67,7 @@ EOF
 
 The following sets up `nginx-ingress` with `cert-bot` for getting/updating ssl certs using [letsencrypt](https://letsencrypt.org/). Note the following two "gotchas"
 
-* These steps worked on a cluster installed with [kops on aws](k8s-kops.md)
+* These steps worked on a cluster installed with [capi](https://cluster-api.sigs.k8s.io/user/quick-start.html)
 * These steps worked on an "internal" cluster with the "infra" node exposed to the internet on `80` and `443`
 
 # Install Nginx Ingress
@@ -78,7 +78,7 @@ If you're installing nginx "internall" the [above installation with helm](#ingre
 
 **CLOUD** 
 
-After installing with [kops](k8s-kops.md), I did an `init` with [helm](../../README.md#helm). Then I did a simple install like this
+After installing with [capi](https://cluster-api.sigs.k8s.io/user/quick-start.html), I did an `init` with [helm](../../README.md#helm). Then I did a simple install like this
 
 ```
 helm install nginx-ingress ingress-nginx/ingress-nginx \

@@ -3,7 +3,7 @@
 These are notes in no paticular oder (it is mostly focused on installation)
 
 * [Installing with Kubeadm](#kubernetes-installation)
-* [Installing in the cloud with Kops](resources/documents/k8s-kops.md)
+* [Installing in the cloud with ClusterAPI](https://cluster-api.sigs.k8s.io/user/quick-start.html)
 * [Ingress](#ingress)
 * [Kubernetes Authentication](resources/documents/k8s-auth.md#kubernetes-authentication)
 * [Storage](resources/documents/k8s-store.md#storage)

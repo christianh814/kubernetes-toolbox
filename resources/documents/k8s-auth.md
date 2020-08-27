@@ -8,7 +8,7 @@ Some of the common methods of authentication are `X509 Client Certs`, `Static Pa
 
 There are many tools that are OIDC compliant; and can "front end" authentication to "back end" systems. The most popular ones are [Dex](https://github.com/dexidp/dex#dex---a-federated-openid-connect-provider) and [Keycloak](https://github.com/keycloak/keycloak#keycloak). These OIDC can front end (and also federate) things like LDAP, Active Directory, Google Auth, and Github (to name a few)
 
-In this howto we will set up Dex to broker the authentication for k8s and GitHub (you can easily modify it to use anything else). This assumes that you have installed kubernetes with [kops](k8s-kops.md#kubernetes-with-kops) and are using TLS with [let's encrypt](k8s-ingress-helm.md#tls). Most of the installs are done with [helm](../../README.md#helm) as well. I have "templates" for files I used [here](../examples)
+In this howto we will set up Dex to broker the authentication for k8s and GitHub (you can easily modify it to use anything else). This assumes that you have installed kubernetes with [capi](https://cluster-api.sigs.k8s.io/user/quick-start.html) and are using TLS with [let's encrypt](k8s-ingress-helm.md#tls). Most of the installs are done with [helm](../../README.md#helm) as well. I have "templates" for files I used [here](../examples)
 
 I'll try and make it as generic as possible; but if you're reading this, I'm assuming you know your way around k8s already.
 
@@ -56,7 +56,6 @@ export DEX_GITHUB_TEAM=fancyteam
 export DEX_KOPS_CLUSTER=k8s.example.com
 export DEX_KOPS_CLUSTER_API=api.k8s.example.com
 ```
-> I used `kubectl get clusterissuer` to get the name of the issuer to populate `LE_ISSUER`  and `kops get cluster` with `kubectl config view  | grep server` for the other values. 
 
 Download  the template
 
@@ -86,33 +85,6 @@ kubectl get certs
 
 You will need to provide the OCID information to Kubernetes (specifically the API server) so that it knows how you plan on authenticating.
 
-With `kops` this was easy. I first edited my config
-
-```
-kops edit cluster k8s.example.com
-```
-
-And I added the follwowing
-
-```
-  kubeAPIServer:
-    anonymousAuth: false
-    authorizationMode: RBAC
-    oidcClientID: dex-k8s-authenticator
-    oidcGroupsClaim: groups
-    oidcIssuerURL: https://dex.apps.k8s.example.com/
-    oidcUsernameClaim: email
-```
-
-Then I did a "rolling update"
-
-```
-kops update cluster --yes
-kops rolling-update cluster --yes
-```
-
-**NOTE** If you're not using `kops` then you'll have to edit the kube-api's command line options when the service starts...here's an example
-
 ```
 --authorization-mode=RBAC
 --oidc-client-id=dex-k8s-authenticator
@@ -124,7 +96,7 @@ kops rolling-update cluster --yes
 
 ## Configure Dex
 
-For connecting Dex you'll need the Kubernetes certificate and key. Let’s obtain from the master (default path for `kops` install is `/srv/kubernetes/`).
+For connecting Dex you'll need the Kubernetes certificate and key. Let’s obtain from the master.
 
 Sample output
 
