@@ -100,10 +100,12 @@ First thing to do, is use `helm` to install it
 ```
 $ helm repo add jetstack https://charts.jetstack.io
 $ helm repo update
-$ helm install cert-manager jetstack/cert-manager --namespace ingress
+$ helm install cert-manager jetstack/cert-manager --set installCRDs=true
 ```
 
 > As of right now there are issues with the latest v0.6.0
+
+FOLLOW THIS: https://cert-manager.io/docs/installation/kubernetes/
 
 Create a  `cluster issuer` yaml. Replace the email with a valid email address
 
