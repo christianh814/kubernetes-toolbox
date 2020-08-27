@@ -103,26 +103,26 @@ $ helm repo update
 $ helm install cert-manager jetstack/cert-manager --set installCRDs=true
 ```
 
-> As of right now there are issues with the latest v0.6.0
-
-FOLLOW THIS: https://cert-manager.io/docs/installation/kubernetes/
+> FOLLOW THIS: https://cert-manager.io/docs/installation/kubernetes/
 
 Create a  `cluster issuer` yaml. Replace the email with a valid email address
 
 ```
 # cat <<EOF > clusterissuer.yaml
-apiVersion: certmanager.k8s.io/v1alpha1
+apiVersion: cert-manager.io/v1alpha2
 kind: ClusterIssuer
 metadata:
   name: letsencrypt-prod
 spec:
   acme:
-    email: example@email.eg
-    http01: {}
-    privateKeySecretRef:
-      key: ""
-      name: letsencrypt-prod
     server: https://acme-v02.api.letsencrypt.org/directory
+    email: example@email.com
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    solvers:
+    - http01:
+        ingress:
+          class: nginx
 EOF
 ```
 
