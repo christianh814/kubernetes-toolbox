@@ -43,13 +43,14 @@ kubectl create ns ingress-nginx
 
 ```
 helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo update
 ```
 
 # Install ingress with helm
 
 ```
-helm install ingress-nginx stable/nginx-ingress --namespace ingress-nginx --set controller.nodeSelector.nginx="ingresshost" \
+helm install ingress-nginx ingress-nginx/ingress-nginx --namespace ingress-nginx --set controller.nodeSelector.nginx="ingresshost" \
 --set rbac.create=true --set controller.image.pullPolicy="Always" --set controller.extraArgs.enable-ssl-passthrough="" \
 --set controller.stats.enabled=true --set controller.service.type="ClusterIP" \
 --set controller.kind="DaemonSet" --set controller.daemonset.useHostPort=true

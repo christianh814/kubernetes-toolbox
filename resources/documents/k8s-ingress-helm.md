@@ -33,7 +33,7 @@ If you haven't already, this is where you would ini helm. [Instuctions here](../
 Using this information; I will deploy the `nginx-ingress` helm chart; giving it the name `nginx-ingress`. List of all options can be found on the [github page](https://github.com/helm/charts/tree/master/stable/nginx-ingress#configuration)
 
 ```
-helm install nginx-ingress stable/nginx-ingress --namespace ingress \
+helm install nginx-ingress ingress-nginx/ingress-nginx --namespace ingress \
 --set rbac.create=true --set controller.image.pullPolicy="Always" --set controller.extraArgs.enable-ssl-passthrough="" \
 --set controller.nodeSelector.nginx="ingresshost" --set controller.stats.enabled=true \
 --set controller.service.externalIPs={192.168.1.8} --set controller.service.type="ClusterIP"
@@ -81,7 +81,7 @@ If you're installing nginx "internall" the [above installation with helm](#ingre
 After installing with [kops](k8s-kops.md), I did an `init` with [helm](../../README.md#helm). Then I did a simple install like this
 
 ```
-helm install nginx-ingress stable/nginx-ingress \
+helm install nginx-ingress ingress-nginx/ingress-nginx \
 --namespace ingress --set rbac.create=true \
 --set controller.extraArgs.enable-ssl-passthrough="" --set controller.image.pullPolicy="Always"
 ```
