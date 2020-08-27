@@ -101,7 +101,7 @@ First thing to do, is use `helm` to install it
 $ helm repo add jetstack https://charts.jetstack.io
 $ helm repo update
 $ helm install cert-manager jetstack/cert-manager \
---set installCRDs=true
+--set installCRDs=true \
 --set ingressShim.defaultIssuerName=letsencrypt-prod \
 --set ingressShim.defaultIssuerKind=ClusterIssuer \
 --set ingressShim.defaultIssuerGroup=cert-manager.io
