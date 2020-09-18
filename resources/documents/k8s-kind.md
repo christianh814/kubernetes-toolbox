@@ -24,7 +24,7 @@ Here is an example mulimaster setup (opening ports to use in case I want to inst
 
 ```yaml
 kind: Cluster
-apiVersion: kind.sigs.k8s.io/v1alpha3
+apiVersion: kind.x-k8s.io/v1alpha4
 networking:
   disableDefaultCNI: True
   podSubnet: "10.254.0.0/16"
