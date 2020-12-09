@@ -150,7 +150,7 @@ ansible all -m shell -a "yum install -y kubelet kubeadm kubectl --disableexclude
 ansible all -m shell -a "systemctl enable --now kubelet"
 ```
 
-(Note: A copy of [k8s.repo](resources/examples/k8s.repo) and [sysctl_k8s.conf](resources/examples/sysctl_k8s.conf) are found in this repo)
+(Note: A copy of [k8s.repo](resources/examples/k8s.repo), [sysctl_k8s.conf](resources/examples/sysctl_k8s.conf), and [containerd.conf](resources/examples/containerd.conf) are found in this repo)
 
 If you run `systemctl status kubelet` you will see it error out becuase it's trying to connect to a control plane that's not there. This is a normal error.
 
