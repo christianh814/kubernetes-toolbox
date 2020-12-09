@@ -120,18 +120,12 @@ I like to keep `<ip of lb>:9000` up so I can monitor when my control plane serve
 
 # Installing Kubeadm
 
-First, on ALL servers (from here on out when I say "ALL servers" I mean the 3 controllers and 3 workers), install the runtime. This can be `cri-o`, `containerd`, `docker`, or `rkt`. For ease of use; I installed `docker`
-
-```
-ansible all -m shell -a "yum -y install docker"
-ansible all -m shell -a "systemctl enable --now docker"
-```
-
-Next, on ALL servers, install these packages:
+On ALL servers, install these packages:
 
 * `kubeadm`: the command to bootstrap the cluster.
 * `kubelet`: the component that runs on all of the machines in your cluster and does things like starting pods and containers.
 * `kubectl`: the command line util to talk to your cluster.
+* `cri-o`: Container runtime.
 
 You should also disable the firewall and SELinux at this point as well
 
@@ -140,11 +134,18 @@ ansible all -m shell -a "sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc
 ansible all -m shell -a "setenforce 0"
 ansible all -m shell -a "systemctl stop firewalld"
 ansible all -m shell -a "systemctl disable firewalld"
+ansible all -m shell -a "modprobe overlay"
+ansible all -m shell -a "modprobe br_netfilter"
 ansible all -m copy -a "src=files/k8s.repo dest=/etc/yum.repos.d/kubernetes.repo"
-ansible all -m shell -a "yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes"
 ansible all -m shell -a "systemctl enable --now kubelet"
 ansible all -m copy -a "src=files/sysctl_k8s.conf dest=/etc/sysctl.d/k8s.conf"
 ansible all -m shell -a "sysctl --system"
+ansible all -m shell -a "curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable.repo https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/devel:kubic:libcontainers:stable.repo"
+ansible all -m shell -a "curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable:cri-o:$VERSION.repo https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:$VERSION/$OS/devel:kubic:libcontainers:stable:cri-o:$VERSION.repo"
+ansible all -m shell -a "yum -y install cri-o"
+ansible all -m shell -a "systemctl daemon-reload"
+ansible all -m shell -a "systemctl enable --now crio"
+ansible all -m shell -a "yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes"
 ```
 
 (Note: A copy of [k8s.repo](resources/examples/k8s.repo) and [sysctl_k8s.conf](resources/examples/sysctl_k8s.conf) are found in this repo)
