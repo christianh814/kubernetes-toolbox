@@ -130,6 +130,7 @@ On ALL servers, install these packages:
 You should also disable the firewall and SELinux at this point as well
 
 ```
+export VERSION=1.20
 ansible all -m shell -a "sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config"
 ansible all -m shell -a "setenforce 0"
 ansible all -m shell -a "systemctl stop firewalld"
