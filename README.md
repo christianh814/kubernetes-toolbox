@@ -360,8 +360,8 @@ kubectl label node dhcp-host-5.cloud.chx haproxy=ingresshost
 Next, I installed using `helm`
 
 ```shell
-	helm install haproxy-ingress haproxy-ingress/haproxy-ingress --create-namespace --namespace=ingress-controller \
-	--set controller.hostNetwork=true --set=controller.nodeSelector.haproxy=ingresshost
+helm install haproxy-ingress haproxy-ingress/haproxy-ingress --create-namespace --namespace=ingress-controller \
+--set controller.hostNetwork=true --set=controller.nodeSelector.haproxy=ingresshost
 ```
 
 You can wait for ingress rollout
