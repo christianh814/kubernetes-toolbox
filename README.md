@@ -139,7 +139,6 @@ ansible all -m shell -a "systemctl disable firewalld"
 ansible all -m shell -a "modprobe overlay"
 ansible all -m shell -a "modprobe br_netfilter"
 ansible all -m copy -a "src=files/k8s.repo dest=/etc/yum.repos.d/kubernetes.repo"
-ansible all -m shell -a "systemctl enable --now kubelet"
 ansible all -m copy -a "src=files/sysctl_k8s.conf dest=/etc/sysctl.d/k8s.conf"
 ansible all -m shell -a "sysctl --system"
 ansible all -m shell -a "curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable.repo https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/devel:kubic:libcontainers:stable.repo"
@@ -148,6 +147,7 @@ ansible all -m shell -a "yum -y install cri-o"
 ansible all -m shell -a "systemctl daemon-reload"
 ansible all -m shell -a "systemctl enable --now crio"
 ansible all -m shell -a "yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes"
+ansible all -m shell -a "systemctl enable --now kubelet"
 ```
 
 (Note: A copy of [k8s.repo](resources/examples/k8s.repo) and [sysctl_k8s.conf](resources/examples/sysctl_k8s.conf) are found in this repo)
