@@ -208,7 +208,7 @@ kubeadm join <loadbalancer>:6443 --token <token> \
     --discovery-token-ca-cert-hash sha256:<hash>
 ```
 
-Next, install a CNI compliant SDN. I used Calico since it was the easiest (always look to [the doc](https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/#pod-network) for the latest yamls). First wget them
+Next, install a CNI compliant SDN. I used Calico since it was the easiest (always look to [the doc](https://docs.projectcalico.org/getting-started/kubernetes/self-managed-onprem/onpremises) for the latest yamls). First wget them
 
 ```
 curl -O https://docs.projectcalico.org/v3.11/manifests/calico.yaml
