@@ -338,12 +338,49 @@ Congrats! You have an HA k8s cluster up and running!
 
 # Ingress
 
-This was a big section so I broke it out depending on your level of knowladge/interest. Either one gets you a working ingress controller.
+This is "high level" notes. I did the instlal with `helm`
 
-* [Detailed Instructions](resources/documents/k8s-ingress.md) - Step by step with explanations
-* [Quick and Dirty](resources/documents/k8s-ingress-qnd.md) - Just get's you up and running
-* [With Helm](resources/documents/k8s-ingress-helm.md) - Like the QnD method, but with [helm](#helm)
-* [Ingress with TLS](resources/documents/k8s-ingress-helm.md#tls) - This uses Helm to install nginx controler with TLS
+```shell
+! which helm >/dev/null 2>&1 && echo "ERROR: Helm is not installed"
+```
+
+First, I initialized `helm`
+
+```shell
+helm repo add haproxy-ingress https://haproxy-ingress.github.io/charts
+helm repo add stable https://charts.helm.sh/stable
+helm repo update
+```
+
+Then I labeled one of my nodes as the "ingress host" (can be any worker)
+
+```shell
+kubectl label node dhcp-host-5.cloud.chx haproxy=ingresshost
+```
+Next, I installed using `helm`
+
+```shell
+	helm install haproxy-ingress haproxy-ingress/haproxy-ingress --create-namespace --namespace=ingress-controller \
+	--set controller.hostNetwork=true --set=controller.nodeSelector.haproxy=ingresshost
+```
+
+You can wait for ingress rollout
+
+```shell
+kubectl rollout status deploy haproxy-ingress -n ingress-controller
+```
+
+Deploy a sample application with an ingress (I have an example [here](https://raw.githubusercontent.com/christianh814/kubernetes-toolbox/master/resources/examples/welcome-php.yaml) that you can modify and use)
+
+```shell
+kubectl apply -f welcome-php.yaml
+```
+
+Wait for the rollout
+
+```shell
+kubectl rollout status deployment welcome-php -n test
+```
 
 # Miscellaneous Notes
 
@@ -385,55 +422,6 @@ This will output the following
 
 Then you can use the combination of the both outputs to join a new master
 
-## Create a Route
-
-This QnD assumes the following
-
-* You want to create a route for your app
-* Your app is already up and running with a service
-* You have installed an [ingress controller](resources/documents/k8s-ingress.md#ingress)
-* You have exported that ingress controller on a [node on port 80](resources/documents/k8s-ingress.md#using-externalips)
-* You have DNS in place that points to that ingress node (or you're using nip.io)
-
-If **ALL** of the above are true...then feel free to proceed.
-
-To create a "route" create an ingress object to tell the controller what to do when it recv a `HTTP_HOST` headder with what's in the `host:` section in your YAML. Example...
-
-Create the YAML
-
-```
-cat > app2-ingress-exip.yaml <<EOF
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-  name: app2-ingress-exip
-spec:
-  rules:
-  - host: app2.192.168.1.8.nip.io
-    http:
-      paths:
-      - backend:
-          serviceName: appsvc2
-          servicePort: 80
-        path: /
-EOF
-```
-
-Apply it to the app in your namespace
-
-```
-kubectl create -n test -f app2-ingress-exip.yaml
-```
-
-You should see it now in k8s
-
-```
-kubectl get ingress app2-ingress-exip -n test
-NAME                HOSTS                     ADDRESS   PORTS   AGE
-app2-ingress-exip   app2.192.168.1.8.nip.io             80      66s
-```
 ## Using nodeSelector
 
 I used `nodeSelector` under the `.spec.template.spec` path on the `ingress` namespace. Below is an example using my ingress controller but you can do this for any app.
