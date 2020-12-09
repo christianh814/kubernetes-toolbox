@@ -130,22 +130,22 @@ On ALL servers, install these packages:
 You should also disable the firewall and SELinux at this point as well
 
 ```
-export VERSION=1.20
-export OS="CentOS_7"
 ansible all -m shell -a "sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config"
 ansible all -m shell -a "setenforce 0"
 ansible all -m shell -a "systemctl stop firewalld"
 ansible all -m shell -a "systemctl disable firewalld"
 ansible all -m shell -a "modprobe overlay"
 ansible all -m shell -a "modprobe br_netfilter"
+ansible all -m copy -a "src=files/containerd.conf dest=/etc/modules-load.d/containerd.conf"
 ansible all -m copy -a "src=files/k8s.repo dest=/etc/yum.repos.d/kubernetes.repo"
 ansible all -m copy -a "src=files/sysctl_k8s.conf dest=/etc/sysctl.d/k8s.conf"
 ansible all -m shell -a "sysctl --system"
-ansible all -m shell -a "curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable.repo https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/devel:kubic:libcontainers:stable.repo"
-ansible all -m shell -a "curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable:cri-o:$VERSION.repo https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:$VERSION/$OS/devel:kubic:libcontainers:stable:cri-o:$VERSION.repo"
-ansible all -m shell -a "yum -y install cri-o"
-ansible all -m shell -a "systemctl daemon-reload"
-ansible all -m shell -a "systemctl enable --now crio"
+ansible all -m shell -a "yum install -y yum-utils device-mapper-persistent-data lvm2"
+ansible all -m shell -a "yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo"
+ansible all -m shell -a "yum install -y containerd.io"
+ansible all -m shell -a "mkdir -p /etc/containerd"
+ansible all -m shell -a "containerd config default > /etc/containerd/config.toml"
+ansible all -m shell -a "systemctl restart containerd"
 ansible all -m shell -a "yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes"
 ansible all -m shell -a "systemctl enable --now kubelet"
 ```
