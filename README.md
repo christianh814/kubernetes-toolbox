@@ -382,6 +382,55 @@ Wait for the rollout
 kubectl rollout status deployment welcome-php -n test
 ```
 
+Sample welcome-php ingress
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations: {}
+  name: welcome-php-ingress
+  namespace: test
+spec:
+  rules:
+  - host: welcome-php.127.0.0.1.nip.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: welcome-php
+            port:
+              number: 8080
+```
+
+What I needed for argocd
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/force-ssl-redirect: "true"
+    ingress.kubernetes.io/ssl-redirect: "true"
+    ingress.kubernetes.io/ssl-passthrough: "true"
+  name: argocd-ingress
+  namespace: argocd
+spec:
+  rules:
+  - host: argocd.127.0.0.1.nip.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: argocd-server
+            port:
+              number: 8080
+```
+
 # Miscellaneous Notes
 
 Notes in no paticular order
