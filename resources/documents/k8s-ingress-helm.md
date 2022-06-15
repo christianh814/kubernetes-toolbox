@@ -100,7 +100,7 @@ First thing to do, is use `helm` to install it
 ```
 $ helm repo add jetstack https://charts.jetstack.io
 $ helm repo update
-$ helm install cert-manager jetstack/cert-manager \
+$ helm install cert-manager jetstack/cert-manager --create-namespace --namespace cert-manager \
 --set installCRDs=true \
 --set ingressShim.defaultIssuerName=letsencrypt-prod \
 --set ingressShim.defaultIssuerKind=ClusterIssuer \
@@ -113,14 +113,14 @@ Create a  `cluster issuer` yaml. Replace the email with a valid email address
 
 ```
 # cat <<EOF > clusterissuer.yaml
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
   name: letsencrypt-prod
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
-    email: example@email.com
+    email: christian@ctest.io
     privateKeySecretRef:
       name: letsencrypt-prod
     solvers:
@@ -140,7 +140,7 @@ Create your ingress config yaml
 
 ```
 # cat <<EOF > welcome-php-ingress.yaml
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
@@ -148,21 +148,25 @@ metadata:
     ingress.kubernetes.io/ssl-redirect: "true"
     kubernetes.io/tls-acme: "true"
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
-    kubernetes.io/ingress.class: "nginx"
-  name: welcome-php
+  name: welcome-php-ingress
+  namespace: test
 spec:
+  ingressClassName: nginx
   tls:
   - hosts:
-    - welcome-php.8.8.8.8.nip.io
+    - welcome-php.test.domain
     secretName: welcome-php-tls
   rules:
-  - host: welcome-php.8.8.8.8.nip.io
+  - host: welcome-php.test.domain
     http:
       paths:
-      - backend:
-          serviceName: welcome-php
-          servicePort: 8080
-        path: /
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: welcome-php
+            port:
+              number: 8080
 EOF
 ```
 
